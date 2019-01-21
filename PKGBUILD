@@ -56,7 +56,7 @@ prepare() {
   done
 
   msg2 "Setting source..."
-  git fetch https://github.com/anupritaisno1/linux-hardened 20190120-snapshot
+  git fetch https://github.com/anupritaisno1/linux-hardened 20190122-stable-release
   git checkout FETCH_HEAD -f
 
   msg2 "Setting config..."
