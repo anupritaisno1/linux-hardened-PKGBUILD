@@ -6,7 +6,7 @@
 # Maintainer: Tobias Powalowski <tpowa@archlinux.org>
 # Maintainer: Thomas Baechler <thomas@archlinux.org>
 
-pkgbase=linux-mainline               # Build stock -ARCH kernel
+pkgbase=linux-mainline-glassrom               # Build stock -ARCH kernel
 #pkgbase=linux-custom       # Build kernel with a different name
 _tag=v5.0-rc2
 pkgver=5.0rc2
@@ -18,7 +18,7 @@ makedepends=(xmlto kmod inetutils bc libelf git python-sphinx graphviz)
 options=('!strip')
 _srcname=linux-mainline
 source=(
-  "$_srcname::git+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git#tag=$_tag"
+  "$_srcname::git+https://github.com/anupritaisno1/linux-hardened"
   config         # the main kernel config file
   60-linux.hook  # pacman hook for depmod
   90-linux.hook  # pacman hook for initramfs regeneration
@@ -55,9 +55,15 @@ prepare() {
     patch -Np1 < "../$src"
   done
 
+  msg2 "Setting source..."
+  git fetch https://github.com/anupritaisno1/linux-hardened 20190120-snapshot
+  git checkout FETCH_HEAD -f
+
   msg2 "Setting config..."
-  cp ../config .config
-  make olddefconfig
+  make glassrom-arch_defconfig
+
+  msg2 "Setting headers..."
+  make headers_install
 
   make -s kernelrelease > ../version
   msg2 "Prepared %s version %s" "$pkgbase" "$(<../version)"
@@ -65,7 +71,7 @@ prepare() {
 
 build() {
   cd $_srcname
-  make bzImage modules htmldocs
+  make bzImage modules htmldocs -j8
 }
 
 _package() {
