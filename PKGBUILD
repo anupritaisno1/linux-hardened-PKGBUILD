@@ -12,34 +12,42 @@ _tag=v5.0-rc3
 pkgver=5.0rc3
 pkgrel=1
 arch=(x86_64)
-url="https://git.archlinux.org/linux.git/log/?h=v$_srcver"
+url="https://github.com/anupritaisno1/linux-hardened"
 license=(GPL2)
 makedepends=(xmlto kmod inetutils bc libelf git python-sphinx graphviz)
 options=('!strip')
-_srcname=linux-mainline
+_srcname=linux-hardened
+_tag=20190123-stable-release
 source=(
-  "$_srcname::git+https://github.com/anupritaisno1/linux-hardened"
-  config         # the main kernel config file
+  "https://glassrom.pw/$_tag.tar.gz"
+  "https://glassrom.pw/$_tag.tar.gz.sig"
   60-linux.hook  # pacman hook for depmod
   90-linux.hook  # pacman hook for initramfs regeneration
   linux.preset   # standard config files for mkinitcpio ramdisk
 )
 validpgpkeys=(
-  'ABAF11C65A2970B130ABE3C479BE3E4300411886'  # Linus Torvalds
-  '647F28654894E3BD457199BE38DBBDC86092693E'  # Greg Kroah-Hartman
-  '8218F88849AAC522E94CF470A5E9288C4FA415FA'  # Jan Alexander Steffens (heftig)
+            '3E5C558DB22B6452F1B27925FE7F160EEB3078CF'
 )
-sha256sums=('SKIP'
-            '3f72b50a40e98737a6195b6d2b3c8c301007d40730bc4ec37fdf9e57dceb6fb9'
-            'ae2e95db94ef7176207c690224169594d49445e04249d2499e9d2fbc117a0b21'
-            '834bd254b56ab71d73f59b3221f056c72f559553c04718e350ab2a3e2991afe0'
-            'ad6344badc91ad0630caacde83f7f9b97276f80d26a20619a87952be65492c65')
+sha512sums=('d628277c63023a061cdbc69cba14f7d9823d4eff6676b200bd315a2ef3748d95ef6804a8c1951fe2a67d1e2b033e9f8e8d8e1eeff96f900c6fbba160b1ebd75c'
+            '0b447ed7a68963e923815c37bdb4930f37fb72804b4cb82c379b460736ca14f7bd0a4bb4e693a82e1ab8174f49dda9d116aa2e343623abcbf75611e62b5eb99b'
+            '7ad5be75ee422dda3b80edd2eb614d8a9181e2c8228cd68b3881e2fb95953bf2dea6cbe7900ce1013c9de89b2802574b7b24869fc5d7a95d3cc3112c4d27063a'
+            'd6faa67f3ef40052152254ae43fee031365d0b1524aa0718b659eb75afc21a3f79ea8d62d66ea311a800109bed545bc8f79e8752319cd378eef2cbd3a09aba22'
+            '2dc6b0ba8f7dbf19d2446c5c5f1823587de89f4e28e9595937dd51a87755099656f2acec50e3e2546ea633ad1bfd1c722e0c2b91eef1d609103d8abdc0a7cbaf')
 
 _kernelname=${pkgbase#linux}
 : ${_kernelname:=-ARCH}
 
 prepare() {
-  cd $_srcname
+  msg2 "Warning. Do NOT compile this package without reviewing the source at https://github.com/anupritaisno1/linux-hardened"
+  msg2 "By default this kernel assumes that it is being used on a server"
+  msg2 "Known issues: keyboard/mouse not detected at boot: revert https://github.com/anupritaisno1/linux-hardened/commit/437f5d59c1018ed19077fb9a720e3501281611e1"
+  msg2 "Bluetooth is broken: revert https://github.com/anupritaisno1/linux-hardened/commit/2256495d69f7bf2b7fe8723ae1d66bad26b896e5"
+  msg2 "Very slow on an old PC/unexplainable lag on very old PCs: revert https://github.com/anupritaisno1/linux-hardened/commit/8e15bd3ff3ba24a4ccb00b5a829c59558d217454"
+  msg2 "nginx throws a function not implemented error: enable CONFIG_AIO"
+  msg2 "Do not use an AUR helper to install this package unless using on a headless server"
+  sleep 5
+  read -p "Press enter to confirm that you have read the source and added the necessary patches"
+  cd $_srcname-$_tag
 
   msg2 "Setting version..."
   scripts/setlocalversion --save-scmversion
@@ -55,10 +63,6 @@ prepare() {
     patch -Np1 < "../$src"
   done
 
-  msg2 "Setting source..."
-  git fetch https://github.com/anupritaisno1/linux-hardened 20190122-stable-release
-  git checkout FETCH_HEAD -f
-
   msg2 "Setting config..."
   make glassrom-arch_defconfig
 
@@ -70,22 +74,28 @@ prepare() {
 }
 
 build() {
-  cd $_srcname
-  make bzImage modules htmldocs -j8
+  cd $_srcname-$_tag
+  # Note: we want nproc * 2 otherwise the kernel builds with half the available threads
+  make bzImage modules htmldocs -j"$(($(nproc --all) * 2))"
 }
 
 _package() {
   pkgdesc="The ${pkgbase/linux/Linux} kernel and modules"
   [[ $pkgbase = linux ]] && groups=(base)
   depends=(coreutils linux-firmware kmod mkinitcpio)
-  optdepends=('crda: to set the correct wireless channels of your country')
+  optdepends=('crda: to set the correct wireless channels of your country'
+              'wireguard-tools: to use WireGuard')
+  provides=('linux-uksm'
+            'linux-hardened'
+            'linux-mainline'
+            'wireguard-dkms')
   backup=("etc/mkinitcpio.d/$pkgbase.preset")
   install=linux.install
 
   local kernver="$(<version)"
   local modulesdir="$pkgdir/usr/lib/modules/$kernver"
 
-  cd $_srcname
+  cd $_srcname-$_tag
 
   msg2 "Installing boot image..."
   # systemd expects to find the kernel here to allow hibernation
@@ -135,7 +145,7 @@ _package-headers() {
 
   local builddir="$pkgdir/usr/lib/modules/$(<version)/build"
 
-  cd $_srcname
+  cd $_srcname-$_tag
 
   msg2 "Installing build files..."
   install -Dt "$builddir" -m644 Makefile .config Module.symvers System.map vmlinux
@@ -216,7 +226,7 @@ _package-docs() {
 
   local builddir="$pkgdir/usr/lib/modules/$(<version)/build"
 
-  cd $_srcname
+  cd $_srcname-$_tag
 
   msg2 "Installing documentation..."
   mkdir -p "$builddir"
