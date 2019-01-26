@@ -17,7 +17,7 @@ license=(GPL2)
 makedepends=(xmlto kmod inetutils bc libelf git python-sphinx graphviz)
 options=('!strip')
 _srcname=linux-hardened
-_tag=20190123-stable-release
+_tag=20190125-stable-release
 source=(
   "https://glassrom.pw/$_tag.tar.gz"
   "https://glassrom.pw/$_tag.tar.gz.sig"
@@ -28,8 +28,8 @@ source=(
 validpgpkeys=(
             '3E5C558DB22B6452F1B27925FE7F160EEB3078CF'
 )
-sha512sums=('d628277c63023a061cdbc69cba14f7d9823d4eff6676b200bd315a2ef3748d95ef6804a8c1951fe2a67d1e2b033e9f8e8d8e1eeff96f900c6fbba160b1ebd75c'
-            '0b447ed7a68963e923815c37bdb4930f37fb72804b4cb82c379b460736ca14f7bd0a4bb4e693a82e1ab8174f49dda9d116aa2e343623abcbf75611e62b5eb99b'
+sha512sums=('d6108a1414172374edd1c918cd3fbc24585594a323aaed54bc9520beb75b2db424edfee26ffb6938126c13dfa9e60f582e365ae9038e1cffe040c4287558f792'
+            'a3ec8c1c07692bd37994d2f1d5e7fbcc9aa71a66f5ecc6f520a6aab392d2b0492942f343de32334c6f84241f21fd14fbf35fc2a54e36e63dcd09f827540ec2cf'
             '7ad5be75ee422dda3b80edd2eb614d8a9181e2c8228cd68b3881e2fb95953bf2dea6cbe7900ce1013c9de89b2802574b7b24869fc5d7a95d3cc3112c4d27063a'
             'd6faa67f3ef40052152254ae43fee031365d0b1524aa0718b659eb75afc21a3f79ea8d62d66ea311a800109bed545bc8f79e8752319cd378eef2cbd3a09aba22'
             '2dc6b0ba8f7dbf19d2446c5c5f1823587de89f4e28e9595937dd51a87755099656f2acec50e3e2546ea633ad1bfd1c722e0c2b91eef1d609103d8abdc0a7cbaf')
@@ -85,10 +85,6 @@ _package() {
   depends=(coreutils linux-firmware kmod mkinitcpio)
   optdepends=('crda: to set the correct wireless channels of your country'
               'wireguard-tools: to use WireGuard')
-  provides=('linux-uksm'
-            'linux-hardened'
-            'linux-mainline'
-            'wireguard-dkms')
   backup=("etc/mkinitcpio.d/$pkgbase.preset")
   install=linux.install
 
