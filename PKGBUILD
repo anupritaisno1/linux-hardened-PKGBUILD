@@ -17,7 +17,7 @@ license=(GPL2)
 makedepends=(xmlto kmod inetutils bc libelf git python-sphinx graphviz)
 options=('!strip')
 _srcname=linux-hardened
-_tag=20190126-stable-release
+_tag=20190129-stable-release
 source=(
   "https://glassrom.pw/$_tag.tar.gz"
   "https://glassrom.pw/$_tag.tar.gz.sig"
@@ -28,8 +28,8 @@ source=(
 validpgpkeys=(
             '3E5C558DB22B6452F1B27925FE7F160EEB3078CF'
 )
-sha512sums=('7fcb2417adc78fb33160d6b2e388b2e56709eaa5978fc9e7de4b5504f1bd7280eba3c517a4d2c1c09851fac4d2a52d00a610a01e7b2528567752f150c022baf7'
-            '471b29d7226dd423b19eee8c1c3556e8d415fd398ae6bbef807d9d6c61820f1764bbb3c6a05aaf9c2f7bbcc9f78e769a234ef7eb1ee458423c4f7bd80f5b16c0'
+sha512sums=('2c0ea59ebecb8abc88f77057097253701c800bd4bbb93104808053403e3ce4c12c4c82bee927c1a58b50c1d6d8a7b0d9dc54b320982417847894707edf647ece'
+            '2c0a75496da3a9b3586937e44a90f595a428032d285019dbb1421f2b352145faba2e67ece017f6e6f836802403c85c55a5c6c9159185cea1b06763d4c945ab0e'
             '7ad5be75ee422dda3b80edd2eb614d8a9181e2c8228cd68b3881e2fb95953bf2dea6cbe7900ce1013c9de89b2802574b7b24869fc5d7a95d3cc3112c4d27063a'
             'd6faa67f3ef40052152254ae43fee031365d0b1524aa0718b659eb75afc21a3f79ea8d62d66ea311a800109bed545bc8f79e8752319cd378eef2cbd3a09aba22'
             '2dc6b0ba8f7dbf19d2446c5c5f1823587de89f4e28e9595937dd51a87755099656f2acec50e3e2546ea633ad1bfd1c722e0c2b91eef1d609103d8abdc0a7cbaf')
