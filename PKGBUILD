@@ -8,7 +8,6 @@
 
 pkgbase=linux-mainline-glassrom               # Build stock -ARCH kernel
 #pkgbase=linux-custom       # Build kernel with a different name
-_tag=v5.0-rc5
 pkgver=5.0rc5
 pkgrel=1
 arch=(x86_64)
@@ -17,10 +16,8 @@ license=(GPL2)
 makedepends=(xmlto kmod inetutils bc libelf git python-sphinx graphviz)
 options=('!strip')
 _srcname=linux-hardened
-_tag=20190205-stable-release
 source=(
-  "https://glassrom.pw/$_tag.tar.xz"
-  "https://glassrom.pw/$_tag.tar.xz.sig"
+ "$_srcname::git+https://github.com/anupritaisno1/linux-hardened"
   60-linux.hook  # pacman hook for depmod
   90-linux.hook  # pacman hook for initramfs regeneration
   linux.preset   # standard config files for mkinitcpio ramdisk
@@ -28,8 +25,7 @@ source=(
 validpgpkeys=(
             '3E5C558DB22B6452F1B27925FE7F160EEB3078CF'
 )
-sha512sums=('dbc149caede0a8d37a4e348a3ef0bded8c4ef21e7ce519c2b93b9f3646017dcb47048db7cd6be146c48529ee3923c2ab4c1dabf38690942edbfa9ecf00483665'
-            '47dc8e5576bad970f29021da913bce9d9a7b0f15b63fd1403d35449b80b306e268d1f7adfca0884edcc4bd0200da43b78a8e13e1cd34f6c3a06d1773b591fddf'
+sha512sums=('SKIP'
             '7ad5be75ee422dda3b80edd2eb614d8a9181e2c8228cd68b3881e2fb95953bf2dea6cbe7900ce1013c9de89b2802574b7b24869fc5d7a95d3cc3112c4d27063a'
             'd6faa67f3ef40052152254ae43fee031365d0b1524aa0718b659eb75afc21a3f79ea8d62d66ea311a800109bed545bc8f79e8752319cd378eef2cbd3a09aba22'
             '2dc6b0ba8f7dbf19d2446c5c5f1823587de89f4e28e9595937dd51a87755099656f2acec50e3e2546ea633ad1bfd1c722e0c2b91eef1d609103d8abdc0a7cbaf')
@@ -43,11 +39,10 @@ prepare() {
   msg2 "Known issues: keyboard/mouse not detected at boot: revert https://github.com/anupritaisno1/linux-hardened/commit/437f5d59c1018ed19077fb9a720e3501281611e1"
   msg2 "Bluetooth is broken: revert https://github.com/anupritaisno1/linux-hardened/commit/2256495d69f7bf2b7fe8723ae1d66bad26b896e5"
   msg2 "Very slow on an old PC/unexplainable lag on very old PCs: revert https://github.com/anupritaisno1/linux-hardened/commit/8e15bd3ff3ba24a4ccb00b5a829c59558d217454"
-  msg2 "nginx throws a function not implemented error: enable CONFIG_AIO"
   msg2 "Do not use an AUR helper to install this package unless using on a headless server"
   sleep 5
   read -p "Press enter to confirm that you have read the source and added the necessary patches"
-  cd $_srcname-$_tag
+  cd $_srcname
 
   msg2 "Setting version..."
   scripts/setlocalversion --save-scmversion
@@ -74,7 +69,7 @@ prepare() {
 }
 
 build() {
-  cd $_srcname-$_tag
+  cd $_srcname
   # Note: we want nproc * 2 otherwise the kernel builds with half the available threads
   make bzImage modules htmldocs -j"$(($(nproc --all) * 2))"
 }
@@ -91,7 +86,7 @@ _package() {
   local kernver="$(<version)"
   local modulesdir="$pkgdir/usr/lib/modules/$kernver"
 
-  cd $_srcname-$_tag
+  cd $_srcname
 
   msg2 "Installing boot image..."
   # systemd expects to find the kernel here to allow hibernation
@@ -141,7 +136,7 @@ _package-headers() {
 
   local builddir="$pkgdir/usr/lib/modules/$(<version)/build"
 
-  cd $_srcname-$_tag
+  cd $_srcname
 
   msg2 "Installing build files..."
   install -Dt "$builddir" -m644 Makefile .config Module.symvers System.map vmlinux
@@ -222,7 +217,7 @@ _package-docs() {
 
   local builddir="$pkgdir/usr/lib/modules/$(<version)/build"
 
-  cd $_srcname-$_tag
+  cd $_srcname
 
   msg2 "Installing documentation..."
   mkdir -p "$builddir"
