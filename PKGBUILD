@@ -8,7 +8,7 @@
 
 pkgbase=linux-mainline-glassrom               # Build stock -ARCH kernel
 #pkgbase=linux-custom       # Build kernel with a different name
-pkgver=5.1rc1
+pkgver=5.1rc6
 pkgrel=1
 arch=(x86_64)
 url="https://github.com/anupritaisno1/linux-hardened"
