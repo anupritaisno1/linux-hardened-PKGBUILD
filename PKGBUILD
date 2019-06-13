@@ -8,12 +8,12 @@
 
 pkgbase=linux-mainline-glassrom               # Build stock -ARCH kernel
 #pkgbase=linux-custom       # Build kernel with a different name
-pkgver=5.1rc6
+pkgver=5.2rc4
 pkgrel=1
 arch=(x86_64)
 url="https://github.com/anupritaisno1/linux-hardened"
 license=(GPL2)
-makedepends=(xmlto kmod inetutils bc libelf git python-virtualenv python-sphinx graphviz)
+makedepends=(xmlto kmod inetutils bc cpio libelf git python-sphinx graphviz)
 options=('!strip')
 _srcname=linux-hardened
 source=(
@@ -43,14 +43,6 @@ prepare() {
   sleep 5
   read -p "Press enter to confirm that you have read the source and added the necessary patches"
   cd $_srcname
-
-# Currently arch ships sphinx>1.8.5 but the kernel needs sphinx==1.8.5
-# Create a virtualenv and downgrade sphinx locally
-# This way we can still build docs
-  msg2 "Creating venv"
-  virtualenv venv;
-  source venv/bin/activate;
-  pip3 install -U --no-cache-dir -I sphinx==1.8.5;
 
   msg2 "Setting version..."
   scripts/setlocalversion --save-scmversion
