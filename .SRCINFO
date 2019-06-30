@@ -1,5 +1,5 @@
 pkgbase = linux-mainline-glassrom
-	pkgver = 5.2rc5
+	pkgver = 5.2rc7
 	pkgrel = 1
 	url = https://github.com/anupritaisno1/linux-hardened
 	arch = x86_64

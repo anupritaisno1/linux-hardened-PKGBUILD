@@ -8,7 +8,7 @@
 
 pkgbase=linux-mainline-glassrom               # Build stock -ARCH kernel
 #pkgbase=linux-custom       # Build kernel with a different name
-pkgver=5.2rc5
+pkgver=5.2rc7
 pkgrel=1
 arch=(x86_64)
 url="https://github.com/anupritaisno1/linux-hardened"
@@ -40,8 +40,6 @@ prepare() {
   msg2 "Bluetooth is broken: revert https://github.com/anupritaisno1/linux-hardened/commit/2256495d69f7bf2b7fe8723ae1d66bad26b896e5"
   msg2 "Very slow on an old PC/unexplainable lag on very old PCs: revert https://github.com/anupritaisno1/linux-hardened/commit/8e15bd3ff3ba24a4ccb00b5a829c59558d217454"
   msg2 "Do not use an AUR helper to install this package unless using on a headless server"
-  sleep 5
-  read -p "Press enter to confirm that you have read the source and added the necessary patches"
   cd $_srcname
 
   msg2 "Setting version..."
